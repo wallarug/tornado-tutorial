@@ -7,61 +7,71 @@
 #
 import tornado.ioloop
 import tornado.web
+import asyncio
+
+from os.path import join, realpath, dirname
+import json
+
+
 
 ## Variables for Application
 PORT = 8888
+DEBUG = True
 
+## Paths
+APP_PATH = dirname(realpath(__file__))
+TEMPLATE_PATH = join(APP_PATH, 'templates')
+STATIC_PATH = join(APP_PATH, 'static')
 
-## Handler - A class or function that responds to a request from a web browser.
-##   This is used when someone goes to the website and serves the request.
-##
-##  Valid methods for this class are the HTTP protocol standards
-##  GET     - retrieve data from server (idempotent)
-##  POST    - send data to server
-##  PUT     - send data to server (updates, idempotent)
-##  DELETE  - deletes resource
-##
+if DEBUG == True:
+    print("Application Path: ", APP_PATH)
+    print("Template Path: ", TEMPLATE_PATH)
+    print("Static Path: ", STATIC_PATH)
+
+## Handler
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("Hello, world")
+        items = ["Item 1", "Item 2", "Item 3"]
+        self.render("example.html", title="Sample", items=items)
 
 
-## This example shows all the RequestHandler methods that can be overwriten.
-##  It is only recommended to overwrite these if necessary.
-class ConsoleHandler(tornado.web.RequestHandler):
-    def initialize(self):
-        pass
+## WebController Application Class
+##   This is used to make changing settings easier and high-levels of customising the settings
+##    that make the application run.
+class WebApp(tornado.web.Application):
+    def __init__(self):
+        ## Set up all the application customised settings here for the webserver.  This is
+        ##  easier than having seperate variables to pass in.
 
-    def prepare(self):
-        #pass
-        if self.request.headers.get("Content-Type", "").startswith("application/json"):
-            self.json_args = json.loads(self.request.body)
-        else:
-            self.json_args = None
+        ## Settings
+        settings = {
+            "template_path": TEMPLATE_PATH,
+            "static_path": STATIC_PATH,
+            "static_url_prefix" : "/static/",
+            "debug": True,
+            "autoreload" : True        
+        }
 
-    def on_finish(self):
-        pass
+        ## Handlers
+        handlers = [
+            #(r"/static/(.*)", web.StaticFileHandler, {"path": self.static_file_path}),
+            (r"/", MainHandler),
+        ]
 
-    def get(self):
-        self.write("> ")
+        ## Initialise the Application
+        super().__init__(handlers, **settings)
 
-    def post(self):
-        pass
+    def start(self, port=8888):
+        ''' Start the tornado webserver. '''
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        print(port)
+        self.port = int(port)
+        self.listen(self.port)
+        tornado.ioloop.IOLoop.instance().start()     
+        
 
-    def put(self):
-        pass
-
-
-## Routing Table and Application Object
-##  This is a routing table with a redirect and two other resources.
-##  NOTE:  routes called in order.
-app = tornado.web.Application([
-        (r"/", MainHandler),
-        (r"/console", ConsoleHandler),
-        (r"/google", tornado.web.RedirectHandler, dict(url="https://www.google.com.au")),
-        ])
 
 ## Run this when the file is openned.
 if __name__ == "__main__":
-    app.listen(PORT)
-    tornado.ioloop.IOLoop.current().start()
+    app = WebApp()
+    app.start(PORT)

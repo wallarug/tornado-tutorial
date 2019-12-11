@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+   <head>
+		<!-- Page Title -->
+		<title> Donkey Car Manager - By Robotics Masters </title>
+		
+		<!-- HTML Settings -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	  
+		<!-- CSS imports -->
+		<!-- <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css') }}" /> -->
+		<link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
+		<link rel="stylesheet" href="{{ static_url('css/RPiHWGuide-ThemeV9.min.css') }}"/>
+		<link rel="stylesheet" href="{{ static_url('css/jquery.mobile.icons.min.css') }}"/>
+		<link rel="stylesheet" href="{{ static_url('css/jquery.mobile.structure-1.4.5.min.css') }}"/>
+		<link rel="stylesheet" href="{{ static_url('css/styles.css') }}"/>
+		
+		<!-- Javascript imports -->
+		<!-- <script type='text/javascript' src="js/jquery-1.11.2.min.js') }}"></script> -->
+		<script type='text/javascript' src="{{ static_url('js/jquery-2.1.4.min.js') }}"></script>
+		<script type='text/javascript' src="{{ static_url('js/jquery.mobile-1.4.5.min.js') }}"></script>
+		<!-- <script>jQuery.noConflict();</script> -->
+		
+		<!-- Cordova / PhoneGap imports [DISABLED] -->
+		<!-- TODO: Update Cordova to latest version and learn how to implement "swipes" from the cordova library -->
+		<!--<script type='text/javascript' src="js/cordova/cordova-android.js') }}"></script>-->
+		
+   </head>
+   <body>
+   
+	<!-- JQuery page -->
+	<div data-role="page" id='home' data-theme="b">
+		<!-- page -- header -->
+		<div data-role="header">
+			<h1> Donkey Car Manager </h1>
+		</div>
+		
+		<!-- page -- main body -->
+		<div data-role="content">
+			<h1 class="header-banner">Donkey Car Manager</h1>
+			<br>
+			
+			<!-- LEVEL ONE OF DISPLAY -->
+			<h3 class="header-banner">USB Drive Operations</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postMount()"> Mount USB </button>
+				<button onclick="postUnmount()"> Unmount USB </button>
+			</div> <!-- end group -->
+			
+			<!-- LEVEL TWO OF DISPLAY -->
+			<h3 class="header-banner">Training Operations</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postStartTraining('rc')"> Begin Training </button>
+				<button onclick="postStartTraining('stop')"> Stop Training </button>
+			</div> <!-- end group -->
+
+			
+			<!-- <h3 class="header-banner">Tub Details</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postTub('name')"> Latest Tub Name </button>
+				<button onclick="postTub('frames')"> Latest Tub Frame Count </button> -->
+
+			</div> <!-- end group -->
+
+			<h3 class="header-banner">AI Commands</h3>
+			<div data-role="controlgroup" data-type="horizontal">
+				<button onclick="postStartModel('refresh')"> Refresh List </button>
+				<button onclick="postStartModel('start')"> Start Model </button>
+
+
+			</div> <!-- end group -->
+			
+			<!-- LEVEL THREE OF DISPLAY -->
+			<div class="ui-grid-a">
+				
+
+				<h2 class="ui-bar ui-bar-a"> Latest Events </h2>
+				<div class="ui-body ui-body-a" style="text-align: left;"> 
+					<p id="console"> </p>
+
+				</div>
+
+			
+			</div> <!-- end grid -->
+
+			
+		</div><!-- /content -->
+		
+		<!-- page -- footer -->
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" style="text-align:center;">
+			<h5>Created by wallarug</h5>
+		</div>
+		<!-- /footer -->
+	</div>
+	
+   </body>
+   
+   <script type="text/javascript">	  
+	  var postCopy = function(cmd){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : cmd})
+		console.log('copying data')
+		$.post('/copy', data)
+	  };
+	  var postUnmount = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'unmount'})
+		console.log('USB unmounted')
+		alert("Unmounted USB")
+		$.post('/unmount', data)
+	  };
+	  var postMount = function(){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : 'mount'})
+		console.log('USB mounted')
+		alert("Mounted USB")
+		$.post('/mount', data)
+	  };
+	  var postTub = function(cmd){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : cmd})
+		console.log('Get latest tub')
+		$.post('/tub', data)
+	  };
+	  var postStartTraining = function(cmd){
+		// Send command (optional) to server
+		data = JSON.stringify({ 'command' : cmd})
+		console.log('Start Training')
+		if (cmd == 'stop'){
+			alert("Stopping Training...")
+		}else{
+			alert("Starting Training...")
+		}
+		$.post('/train', data)
+	  };
+	  var postStartModel = function(cmd){
+		// Send command (optional) to server
+		var model = document.getElementsByName("model_name");
+		data = JSON.stringify({ 'command' : cmd, 'model' : model})
+		console.log('Start Model')
+		alert("Starting Model...")
+		$.post('/model', data)
+	  };
+	</script>
+ </html>
