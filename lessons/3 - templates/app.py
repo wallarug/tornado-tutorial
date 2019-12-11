@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Hello, World! from Tornado Documentation
 # https://www.tornadoweb.org/en/stable/
 # 
 #
@@ -13,7 +12,6 @@ from os.path import join, realpath, dirname
 import json
 
 
-
 ## Variables for Application
 PORT = 8888
 DEBUG = True
@@ -22,11 +20,6 @@ DEBUG = True
 APP_PATH = dirname(realpath(__file__))
 TEMPLATE_PATH = join(APP_PATH, 'templates')
 STATIC_PATH = join(APP_PATH, 'static')
-
-if DEBUG == True:
-    print("Application Path: ", APP_PATH)
-    print("Template Path: ", TEMPLATE_PATH)
-    print("Static Path: ", STATIC_PATH)
 
 ## Handler
 class MainHandler(tornado.web.RequestHandler):
@@ -54,7 +47,6 @@ class WebApp(tornado.web.Application):
 
         ## Handlers
         handlers = [
-            #(r"/static/(.*)", web.StaticFileHandler, {"path": self.static_file_path}),
             (r"/", MainHandler),
         ]
 
@@ -71,7 +63,7 @@ class WebApp(tornado.web.Application):
         
 
 
-## Run this when the file is openned.
+## Run this when the file is opened.
 if __name__ == "__main__":
     app = WebApp()
     app.start(PORT)
